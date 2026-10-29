@@ -1,0 +1,435 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Flock Energy Urja Meter API",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "description": "Check application health only. Does not check portal connectivity.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/meters/search": {
+      "get": {
+        "tags": [
+          "meters"
+        ],
+        "summary": "Search Meters Endpoint",
+        "description": "Search meters via the portal.\n\nForwarded to the verified portal endpoint:\nGET /portal/meters/search?q=<q>&page=<page>\n\nRequires the portal session cookie (__Secure-better-auth.session_token) to be\nsent by the client. The authentication/acquisition flow for this cookie is\nnot yet verified.",
+        "operationId": "search_meters_endpoint_meters_search_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Search query (meter ID or serial number)",
+              "default": "",
+              "title": "Q"
+            },
+            "description": "Search query (meter ID or serial number)"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page size",
+              "default": 20,
+              "title": "Page Size"
+            },
+            "description": "Page size"
+          },
+          {
+            "name": "__Secure-better-auth.session_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Portal session cookie observed in browser",
+              "title": "  Secure-Better-Auth.Session Token"
+            },
+            "description": "Portal session cookie observed in browser"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeterSearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/meters": {
+      "get": {
+        "tags": [
+          "meters"
+        ],
+        "summary": "List Meters Endpoint",
+        "description": "List meters with an empty search query (verified default behavior).",
+        "operationId": "list_meters_endpoint_meters_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page size",
+              "default": 20,
+              "title": "Page Size"
+            },
+            "description": "Page size"
+          },
+          {
+            "name": "__Secure-better-auth.session_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Portal session cookie observed in browser",
+              "title": "  Secure-Better-Auth.Session Token"
+            },
+            "description": "Portal session cookie observed in browser"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeterSearchResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transformers": {
+      "get": {
+        "tags": [
+          "transformers"
+        ],
+        "summary": "List Transformers Endpoint",
+        "description": "List distribution transformers via the portal.\n\nForwarded to the verified portal endpoint:\nGET /portal/dts?page=<page>\n\nRequires the portal session cookie (__Secure-better-auth.session_token) to be\nsent by the client. The authentication/acquisition flow for this cookie is\nnot yet verified.",
+        "operationId": "list_transformers_endpoint_transformers_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "__Secure-better-auth.session_token",
+            "in": "cookie",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Portal session cookie observed in browser",
+              "title": "  Secure-Better-Auth.Session Token"
+            },
+            "description": "Portal session cookie observed in browser"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TransformerListResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "MeterRecord": {
+        "properties": {
+          "meterId": {
+            "type": "string",
+            "title": "Meterid"
+          },
+          "serialNo": {
+            "type": "string",
+            "title": "Serialno"
+          },
+          "make": {
+            "type": "string",
+            "title": "Make"
+          },
+          "phaseType": {
+            "type": "string",
+            "title": "Phasetype"
+          },
+          "installStatus": {
+            "type": "string",
+            "title": "Installstatus"
+          },
+          "dtCode": {
+            "type": "string",
+            "title": "Dtcode"
+          }
+        },
+        "type": "object",
+        "required": [
+          "meterId",
+          "serialNo",
+          "make",
+          "phaseType",
+          "installStatus",
+          "dtCode"
+        ],
+        "title": "MeterRecord",
+        "description": "A single meter record as observed in the portal.\n\nVerified fields: meterId, serialNo, make, phaseType, installStatus, dtCode."
+      },
+      "MeterSearchResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/MeterRecord"
+            },
+            "type": "array",
+            "title": "Data"
+          },
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "pageSize": {
+            "type": "integer",
+            "title": "Pagesize"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "data",
+          "page",
+          "pageSize",
+          "total"
+        ],
+        "title": "MeterSearchResponse",
+        "description": "Response from the portal meter search endpoint.\n\nVerified top-level fields: data, page, pageSize, total.\nAdditional unknown keys are preserved in ``extra``."
+      },
+      "TransformerListResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/TransformerRecord"
+            },
+            "type": "array",
+            "title": "Data"
+          }
+        },
+        "additionalProperties": true,
+        "type": "object",
+        "required": [
+          "data"
+        ],
+        "title": "TransformerListResponse",
+        "description": "Response from the portal transformers endpoint.\n\nVerified top-level field: data. Additional unknown keys are preserved."
+      },
+      "TransformerRecord": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "feederCode": {
+            "type": "string",
+            "title": "Feedercode"
+          },
+          "capacityKva": {
+            "type": "integer",
+            "title": "Capacitykva"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "feederCode",
+          "capacityKva"
+        ],
+        "title": "TransformerRecord",
+        "description": "A single transformer record as observed in the portal.\n\nVerified fields from the expanded first record: code, name, feederCode,\ncapacityKva. Not claimed to be all fields in every record."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
