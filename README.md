@@ -106,3 +106,25 @@ obtain and maintain this session is unverified — see PROTOCOL.md.
 - `openapi.json` — Generated OpenAPI schema
 - `RECON_LOG.md` — Portal investigation notes (preserved)
 - `.env.example` — Environment variable template (do not commit `.env`)
+
+## Reflection
+
+### What assumptions did you make?
+
+I assumed the portal base URL is `https://urja-ops.flockenergy.tech`, that the meter search endpoint accepts `q` and `page` query parameters matching the verified request `search?q=&page=1`, that an empty search query returns the full paginated list, that the transformer endpoint accepts a `page` parameter (`dts?page=1`), and that forwarding the session cookie `__Secure-better-auth.session_token` is sufficient for authorization. These assumptions are documented in `PROTOCOL.md` Section 2 and are explicitly marked as potentially wrong.
+
+### Which part was the most difficult, and how did you get unstuck?
+
+The most difficult part was understanding the legacy portal's request structure and session-cookie behavior. Chrome DevTools showed that browser requests include a `Cookie` header with `__Secure-better-auth.session_token`, but the complete authentication flow — how to obtain, renew, or refresh the cookie — was not verified. I got unstuck by drawing a clear boundary: the API exposes the session cookie as an opaque pass-through parameter rather than implementing login logic. Verified observations (endpoint URLs, response fields, pagination values) were separated from unknowns (auth flow, full transformer schema, pagination metadata) and documented in `RECON_LOG.md` and `PROTOCOL.md`.
+
+### If you had another day, what would you improve?
+
+I would verify live authenticated integration safely against a staging portal instance, test pagination across multiple pages beyond page 1, improve session handling with automatic cookie refresh if a login flow is discovered, and add integration tests alongside the existing mocked unit tests. I would also expand transformer schema verification across multiple records and implement the meter export endpoint that was verified in the portal but not implemented in the API.
+
+### What mistake did you make while solving this?
+
+During initial Git setup, I confused the Git repository root and ran Git commands in the parent user directory (`C:\Users\tg157`) instead of the project directory (`C:\Users\tg157\flock-urja-meter-api`). This was resolved by initializing a separate Git repository in the project directory and adding the remote `https://github.com/aaryaa135/flock-urja-meter-api.git`. No unrelated files were committed; only project files are tracked.
+
+### If you were reviewing your own submission, what would you criticise?
+
+I would criticise that the authentication flow remains unverified and no login endpoint is implemented, leaving clients to manually supply the session cookie. The transformer schema is only partially verified from the first record, and all tests are mocked — there are no live integration tests. The reflection answers are documented in `PROTOCOL.md` rather than inline in `README.md`, which makes them harder to discover. These are honest limitations of a time-constrained submission, not hidden defects.
